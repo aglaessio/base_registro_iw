@@ -26,11 +26,9 @@
             <ul id="fileList"></ul>
         </div>
 
-        <!-- Área de Exclusão (protegida por senha) -->
+        <!-- Área de Exclusão -->
         <div class="delete-section">
-            <label for="passwordInput">Senha:</label>
-            <input type="password" id="passwordInput" placeholder="Digite a senha para excluir">
-            <button onclick="deleteFiles()">❌ Excluir Arquivos</button>
+            <button onclick="requestPasswordAndDelete()">❌ Excluir Arquivos</button>
         </div>
     </div>
 
