@@ -1,4 +1,4 @@
-/* Estilo Retrô */
+/* Estilo Retrô Melhorado */
 body {
     background-color: #1a1a1a;
     color: #00ff00;
@@ -43,15 +43,14 @@ input[type="file"] {
     color: #000;
     border: none;
     padding: 10px 20px;
-    font-family: 'Courier New', Courier, monospace;
     font-size: 1em;
     cursor: pointer;
     margin: 5px;
     display: inline-block;
 }
 
-.custom-file-upload:hover {
-    background-color: #00cc00;
+.custom-file-upload:hover, button:hover {
+    background-color: #009900;
 }
 
 button {
@@ -59,14 +58,9 @@ button {
     color: #000;
     border: none;
     padding: 10px 20px;
-    font-family: 'Courier New', Courier, monospace;
     font-size: 1em;
     cursor: pointer;
     margin: 5px;
-}
-
-button:hover {
-    background-color: #00cc00;
 }
 
 .file-list {
@@ -93,14 +87,4 @@ a:hover {
 
 .delete-section {
     margin-top: 20px;
-}
-
-input[type="password"] {
-    padding: 10px;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 1em;
-    margin-right: 10px;
-    border: 1px solid #00ff00;
-    background-color: #000;
-    color: #00ff00;
 }
