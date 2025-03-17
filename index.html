@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base de Registros</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="retro-container">
+        <h1>📁 Base de Registros</h1>
+        <p>Upload e Gerenciamento de Pastas</p>
+
+        <!-- Área de Upload -->
+        <div class="upload-section">
+            <input type="file" id="folderInput" webkitdirectory directory multiple>
+            <button onclick="uploadFolder()">📂 Upload Pasta</button>
+        </div>
+
+        <!-- Lista de Pastas -->
+        <div class="file-list">
+            <h2>📂 Pastas Disponíveis:</h2>
+            <ul id="fileList"></ul>
+        </div>
+
+        <!-- Área de Exclusão (protegida por senha) -->
+        <div class="delete-section">
+            <input type="password" id="passwordInput" placeholder="Digite a senha para excluir">
+            <button onclick="deleteFolder()">❌ Excluir Pasta</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>

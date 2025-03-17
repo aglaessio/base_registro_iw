@@ -1,0 +1,90 @@
+/* Estilo Retrô */
+body {
+    background-color: #1a1a1a;
+    color: #00ff00;
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.retro-container {
+    background-color: #000;
+    border: 2px solid #00ff00;
+    padding: 20px;
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+.upload-section {
+    margin-bottom: 20px;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+button {
+    background-color: #00ff00;
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1em;
+    cursor: pointer;
+    margin: 5px;
+}
+
+button:hover {
+    background-color: #00cc00;
+}
+
+.file-list {
+    text-align: left;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    margin: 10px 0;
+}
+
+a {
+    color: #00ff00;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.delete-section {
+    margin-top: 20px;
+}
+
+input[type="password"] {
+    padding: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1em;
+    margin-right: 10px;
+    border: 1px solid #00ff00;
+    background-color: #000;
+    color: #00ff00;
+}
