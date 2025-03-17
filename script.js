@@ -1,4 +1,4 @@
-const GITHUB_TOKEN = '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'; // Seu token do GitHub
+const GITHUB_TOKEN = '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'; // Remova isso e use variáveis de ambiente
 const REPO_OWNER = 'aglaessio'; // Substitua pelo seu usuário do GitHub
 const REPO_NAME = 'base_registro_iw'; // Substitua pelo nome do repositório
 const UPLOAD_FOLDER = 'uploads'; // Pasta onde os arquivos serão armazenados
@@ -37,6 +37,7 @@ async function uploadFolder() {
                     console.log(`Arquivo enviado com sucesso: ${file.name}`);
                 } else {
                     console.error(`Erro ao enviar arquivo: ${file.name}`, await response.json());
+                    alert(`Erro ao enviar arquivo: ${file.name}`);
                 }
             };
         }
@@ -70,6 +71,7 @@ async function listFiles() {
         });
     } else {
         console.error('Erro ao listar arquivos:', await response.json());
+        alert('Erro ao listar arquivos.');
     }
 }
 
@@ -82,38 +84,41 @@ async function deleteFolder() {
     const correctPassword = 'Maria.191290';
 
     if (password === correctPassword) {
-        const response = await fetch(
-            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${UPLOAD_FOLDER}`,
-            {
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`
-                }
-            }
-        );
-
-        if (response.ok) {
-            const files = await response.json();
-            for (const file of files) {
-                await fetch(
-                    `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${file.path}`,
-                    {
-                        method: 'DELETE',
-                        headers: {
-                            'Authorization': `token ${GITHUB_TOKEN}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            message: `Excluindo ${file.name}`,
-                            sha: file.sha
-                        })
+        if (confirm('Tem certeza que deseja excluir todos os arquivos? Esta ação não pode ser desfeita.')) {
+            const response = await fetch(
+                `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${UPLOAD_FOLDER}`,
+                {
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`
                     }
-                );
-                console.log(`Arquivo excluído: ${file.name}`);
+                }
+            );
+
+            if (response.ok) {
+                const files = await response.json();
+                for (const file of files) {
+                    await fetch(
+                        `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${file.path}`,
+                        {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `token ${GITHUB_TOKEN}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                message: `Excluindo ${file.name}`,
+                                sha: file.sha
+                            })
+                        }
+                    );
+                    console.log(`Arquivo excluído: ${file.name}`);
+                }
+                alert('Todas as pastas e arquivos foram excluídos!');
+                listFiles(); // Atualiza a lista
+            } else {
+                console.error('Erro ao listar arquivos:', await response.json());
+                alert('Erro ao listar arquivos.');
             }
-            alert('Todas as pastas e arquivos foram excluídos!');
-            listFiles(); // Atualiza a lista
-        } else {
-            console.error('Erro ao listar arquivos:', await response.json());
         }
     } else {
         alert('Senha incorreta. Acesso negado.');
