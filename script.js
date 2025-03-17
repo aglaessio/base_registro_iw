@@ -18,31 +18,37 @@ async function uploadFolder() {
             reader.onload = async () => {
                 const fileContent = reader.result.split(',')[1]; // Remove o prefixo "data:..."
 
-                const response = await fetch(
-                    `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`,
-                    {
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': `token ${GITHUB_TOKEN}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            message: `Adicionando ${file.name}`,
-                            content: fileContent // Conteúdo em Base64
-                        })
-                    }
-                );
+                try {
+                    const response = await fetch(
+                        `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`,
+                        {
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': `token ${GITHUB_TOKEN}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                message: `Adicionando ${file.name}`,
+                                content: fileContent // Conteúdo em Base64
+                            })
+                        }
+                    );
 
-                if (response.ok) {
-                    console.log(`Arquivo enviado com sucesso: ${file.name}`);
-                } else {
-                    console.error(`Erro ao enviar arquivo: ${file.name}`, await response.json());
+                    if (response.ok) {
+                        console.log(`Arquivo enviado com sucesso: ${file.name}`);
+                    } else {
+                        const error = await response.json();
+                        console.error(`Erro ao enviar arquivo: ${file.name}`, error);
+                        alert(`Erro ao enviar arquivo: ${file.name}`);
+                    }
+                } catch (error) {
+                    console.error(`Erro ao enviar arquivo: ${file.name}`, error);
                     alert(`Erro ao enviar arquivo: ${file.name}`);
                 }
             };
         }
         alert('Upload de pasta concluído!');
-        listFiles(); // Atualiza a lista de arquivos
+        listFiles(); // Atualiza a lista de arquivos após o upload
     } else {
         alert('Selecione uma pasta antes de enviar.');
     }
@@ -51,27 +57,44 @@ async function uploadFolder() {
 // Função para listar arquivos
 async function listFiles() {
     const fileList = document.getElementById('fileList');
-    fileList.innerHTML = '';
+    fileList.innerHTML = ''; // Limpa a lista antes de atualizar
 
-    const response = await fetch(
-        `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${UPLOAD_FOLDER}`,
-        {
-            headers: {
-                'Authorization': `token ${GITHUB_TOKEN}`
+    try {
+        const response = await fetch(
+            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${UPLOAD_FOLDER}`,
+            {
+                headers: {
+                    'Authorization': `token ${GITHUB_TOKEN}`
+                }
             }
-        }
-    );
+        );
 
-    if (response.ok) {
-        const files = await response.json();
-        files.forEach((file) => {
-            const li = document.createElement('li');
-            li.textContent = file.name;
-            fileList.appendChild(li);
-        });
-    } else {
-        console.error('Erro ao listar arquivos:', await response.json());
-        alert('Erro ao listar arquivos.');
+        if (response.ok) {
+            const files = await response.json();
+
+            // Verifica se a resposta é um array
+            if (Array.isArray(files)) {
+                files.forEach((file) => {
+                    const li = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = file.download_url; // Link para baixar o arquivo
+                    link.textContent = file.name;
+                    link.target = '_blank'; // Abre o link em uma nova aba
+                    li.appendChild(link);
+                    fileList.appendChild(li);
+                });
+            } else {
+                console.error('Resposta inesperada da API:', files);
+                alert('Erro ao listar arquivos: Resposta inesperada da API.');
+            }
+        } else {
+            const error = await response.json();
+            console.error('Erro ao listar arquivos:', error);
+            alert('Erro ao listar arquivos. Verifique o console para mais detalhes.');
+        }
+    } catch (error) {
+        console.error('Erro ao listar arquivos:', error);
+        alert('Erro ao listar arquivos. Verifique o console para mais detalhes.');
     }
 }
 
