@@ -54,7 +54,7 @@ async function uploadFolder() {
     }
 }
 
-// Função para listar arquivos
+// Função para listar pastas e arquivos
 async function listFiles() {
     const fileList = document.getElementById('fileList');
     fileList.innerHTML = ''; // Limpa a lista antes de atualizar
@@ -98,7 +98,7 @@ async function listFiles() {
     }
 }
 
-// Função para excluir arquivos (protegida por senha)
+// Função para excluir pastas (protegida por senha)
 async function deleteFolder() {
     const passwordInput = document.getElementById('passwordInput');
     const password = passwordInput.value;
