@@ -1,4 +1,4 @@
-const GITHUB_TOKEN = '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'; // Remova isso e use variáveis de ambiente
+const GITHUB_TOKEN = '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'; // Remova isso e use variáveis de ambiente
 const REPO_OWNER = 'aglaessio'; // Substitua pelo seu usuário do GitHub
 const REPO_NAME = 'base_registro_iw'; // Substitua pelo nome do repositório
 
