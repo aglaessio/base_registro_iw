@@ -13,6 +13,9 @@
 
         <!-- Área de Upload -->
         <div class="upload-section">
+            <label for="folderInput" class="custom-file-upload">
+                📂 Selecionar Pasta
+            </label>
             <input type="file" id="folderInput" webkitdirectory directory multiple>
             <button onclick="uploadFolder()">📂 Upload Pasta</button>
         </div>
@@ -25,6 +28,7 @@
 
         <!-- Área de Exclusão (protegida por senha) -->
         <div class="delete-section">
+            <label for="passwordInput">Senha:</label>
             <input type="password" id="passwordInput" placeholder="Digite a senha para excluir">
             <button onclick="deleteFolder()">❌ Excluir Pasta</button>
         </div>
