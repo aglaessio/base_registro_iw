@@ -1,16 +1,15 @@
 const GITHUB_TOKEN = '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'; // Remova isso e use variáveis de ambiente
 const REPO_OWNER = 'aglaessio'; // Substitua pelo seu usuário do GitHub
 const REPO_NAME = 'base_registro_iw'; // Substitua pelo nome do repositório
-const UPLOAD_FOLDER = ''; // Usa a raiz do repositório (main)
 
-// Função para listar pastas e arquivos
+// Função para listar arquivos
 async function listFiles() {
     const fileList = document.getElementById('fileList');
     fileList.innerHTML = ''; // Limpa a lista antes de atualizar
 
     try {
         const response = await fetch(
-            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${UPLOAD_FOLDER}`,
+            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/`,
             {
                 headers: {
                     'Authorization': `token ${GITHUB_TOKEN}`
@@ -54,7 +53,7 @@ async function uploadFolder() {
 
     if (files.length > 0) {
         for (const file of files) {
-            const filePath = `${UPLOAD_FOLDER}/${file.webkitRelativePath}`;
+            const filePath = file.webkitRelativePath || file.name; // Usa o caminho relativo ou o nome do arquivo
 
             // Lê o conteúdo do arquivo como Base64
             const reader = new FileReader();
@@ -98,8 +97,8 @@ async function uploadFolder() {
     }
 }
 
-// Função para excluir pastas (protegida por senha)
-async function deleteFolder() {
+// Função para excluir arquivos (protegida por senha)
+async function deleteFiles() {
     const passwordInput = document.getElementById('passwordInput');
     const password = passwordInput.value;
 
@@ -109,7 +108,7 @@ async function deleteFolder() {
     if (password === correctPassword) {
         if (confirm('Tem certeza que deseja excluir todos os arquivos? Esta ação não pode ser desfeita.')) {
             const response = await fetch(
-                `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${UPLOAD_FOLDER}`,
+                `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/`,
                 {
                     headers: {
                         'Authorization': `token ${GITHUB_TOKEN}`
@@ -136,7 +135,7 @@ async function deleteFolder() {
                     );
                     console.log(`Arquivo excluído: ${file.name}`);
                 }
-                alert('Todas as pastas e arquivos foram excluídos!');
+                alert('Todos os arquivos foram excluídos!');
                 listFiles(); // Atualiza a lista
             } else {
                 console.error('Erro ao listar arquivos:', await response.json());
