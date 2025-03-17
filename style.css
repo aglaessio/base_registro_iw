@@ -38,6 +38,22 @@ input[type="file"] {
     display: none;
 }
 
+.custom-file-upload {
+    background-color: #00ff00;
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1em;
+    cursor: pointer;
+    margin: 5px;
+    display: inline-block;
+}
+
+.custom-file-upload:hover {
+    background-color: #00cc00;
+}
+
 button {
     background-color: #00ff00;
     color: #000;
