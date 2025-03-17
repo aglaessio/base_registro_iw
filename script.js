@@ -39,11 +39,11 @@ async function uploadFolder() {
                     } else {
                         const error = await response.json();
                         console.error(`Erro ao enviar arquivo: ${file.name}`, error);
-                        alert(`Erro ao enviar arquivo: ${file.name}`);
+                        alert(`Erro ao enviar arquivo: ${file.name}. Verifique o console para mais detalhes.`);
                     }
                 } catch (error) {
                     console.error(`Erro ao enviar arquivo: ${file.name}`, error);
-                    alert(`Erro ao enviar arquivo: ${file.name}`);
+                    alert(`Erro ao enviar arquivo: ${file.name}. Verifique o console para mais detalhes.`);
                 }
             };
         }
@@ -85,7 +85,7 @@ async function listFiles() {
                 });
             } else {
                 console.error('Resposta inesperada da API:', files);
-                alert('Erro ao listar arquivos: Resposta inesperada da API.');
+                alert('Erro ao listar arquivos: Resposta inesperada da API. Verifique o console para mais detalhes.');
             }
         } else {
             const error = await response.json();
@@ -140,7 +140,7 @@ async function deleteFolder() {
                 listFiles(); // Atualiza a lista
             } else {
                 console.error('Erro ao listar arquivos:', await response.json());
-                alert('Erro ao listar arquivos.');
+                alert('Erro ao listar arquivos. Verifique o console para mais detalhes.');
             }
         }
     } else {
