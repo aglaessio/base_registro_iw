@@ -1,151 +1,142 @@
-const GITHUB_TOKEN = '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'; // Remova isso e use variáveis de ambiente
 const REPO_OWNER = 'aglaessio'; // Substitua pelo seu usuário do GitHub
 const REPO_NAME = 'base_registro_iw'; // Substitua pelo nome do repositório
+
+// Obtém o token de ambiente (substitua essa lógica pelo seu backend seguro)
+async function getToken() {
+    return localStorage.getItem('GITHUB_TOKEN'); // Use um método seguro!
+}
 
 // Função para listar arquivos
 async function listFiles() {
     const fileList = document.getElementById('fileList');
-    fileList.innerHTML = ''; // Limpa a lista antes de atualizar
+    fileList.innerHTML = '';
+    const token = await getToken();
+
+    if (!token) {
+        alert('Erro: Token do GitHub não encontrado.');
+        return;
+    }
 
     try {
         const response = await fetch(
             `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/`,
             {
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`
-                }
+                headers: { 'Authorization': `token ${token}` }
             }
         );
-
-        if (response.ok) {
-            const files = await response.json();
-
-            // Verifica se a resposta é um array
-            if (Array.isArray(files)) {
-                files.forEach((file) => {
-                    const li = document.createElement('li');
-                    const link = document.createElement('a');
-                    link.href = file.download_url; // Link para baixar o arquivo
-                    link.textContent = file.name;
-                    link.target = '_blank'; // Abre o link em uma nova aba
-                    li.appendChild(link);
-                    fileList.appendChild(li);
-                });
-            } else {
-                console.error('Resposta inesperada da API:', files);
-                alert('Erro ao listar arquivos: Resposta inesperada da API. Verifique o console para mais detalhes.');
-            }
-        } else {
-            const error = await response.json();
-            console.error('Erro ao listar arquivos:', error);
-            alert('Erro ao listar arquivos. Verifique o console para mais detalhes.');
+        
+        if (!response.ok) throw new Error('Erro ao buscar arquivos.');
+        
+        const files = await response.json();
+        if (Array.isArray(files)) {
+            files.forEach(file => {
+                const li = document.createElement('li');
+                const link = document.createElement('a');
+                link.href = file.download_url;
+                link.textContent = file.name;
+                link.target = '_blank';
+                li.appendChild(link);
+                fileList.appendChild(li);
+            });
         }
     } catch (error) {
-        console.error('Erro ao listar arquivos:', error);
-        alert('Erro ao listar arquivos. Verifique o console para mais detalhes.');
+        console.error(error);
+        alert('Erro ao listar arquivos.');
     }
 }
 
-// Função para fazer upload de pastas
+// Função para upload de arquivos
 async function uploadFolder() {
     const folderInput = document.getElementById('folderInput');
     const files = folderInput.files;
-
+    const token = await getToken();
+    
+    if (!token) {
+        alert('Erro: Token do GitHub não encontrado.');
+        return;
+    }
+    
     if (files.length > 0) {
         for (const file of files) {
-            const filePath = file.webkitRelativePath || file.name; // Usa o caminho relativo ou o nome do arquivo
-
-            // Lê o conteúdo do arquivo como Base64
+            const filePath = file.webkitRelativePath || file.name;
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = async () => {
-                const fileContent = reader.result.split(',')[1]; // Remove o prefixo "data:..."
-
+                const fileContent = reader.result.split(',')[1];
                 try {
                     const response = await fetch(
                         `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`,
                         {
                             method: 'PUT',
                             headers: {
-                                'Authorization': `token ${GITHUB_TOKEN}`,
+                                'Authorization': `token ${token}`,
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
                                 message: `Adicionando ${file.name}`,
-                                content: fileContent // Conteúdo em Base64
+                                content: fileContent
                             })
                         }
                     );
-
-                    if (response.ok) {
-                        console.log(`Arquivo enviado com sucesso: ${file.name}`);
-                    } else {
-                        const error = await response.json();
-                        console.error(`Erro ao enviar arquivo: ${file.name}`, error);
-                        alert(`Erro ao enviar arquivo: ${file.name}. Verifique o console para mais detalhes.`);
-                    }
+                    if (!response.ok) throw new Error(`Erro no upload: ${file.name}`);
                 } catch (error) {
-                    console.error(`Erro ao enviar arquivo: ${file.name}`, error);
-                    alert(`Erro ao enviar arquivo: ${file.name}. Verifique o console para mais detalhes.`);
+                    console.error(error);
                 }
             };
         }
         alert('Upload de pasta concluído!');
-        listFiles(); // Atualiza a lista de arquivos após o upload
+        listFiles();
     } else {
         alert('Selecione uma pasta antes de enviar.');
     }
 }
 
-// Função para excluir arquivos (protegida por senha)
-async function deleteFiles() {
-    const passwordInput = document.getElementById('passwordInput');
-    const password = passwordInput.value;
+// Função para exclusão de arquivos
+async function requestPasswordAndDelete() {
+    const password = prompt('Digite a senha para excluir os arquivos:');
+    if (password !== 'suaSenhaSegura') { // Substituir por autenticação segura
+        alert('Senha incorreta. Acesso negado.');
+        return;
+    }
+    const token = await getToken();
+    
+    if (!token) {
+        alert('Erro: Token do GitHub não encontrado.');
+        return;
+    }
 
-    // Senha correta
-    const correctPassword = 'Maria.191290';
+    try {
+        const response = await fetch(
+            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/`,
+            { headers: { 'Authorization': `token ${token}` } }
+        );
 
-    if (password === correctPassword) {
-        if (confirm('Tem certeza que deseja excluir todos os arquivos? Esta ação não pode ser desfeita.')) {
-            const response = await fetch(
-                `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/`,
+        if (!response.ok) throw new Error('Erro ao buscar arquivos para excluir.');
+        
+        const files = await response.json();
+        for (const file of files) {
+            await fetch(
+                `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${file.path}`,
                 {
+                    method: 'DELETE',
                     headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`
-                    }
+                        'Authorization': `token ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `Excluindo ${file.name}`,
+                        sha: file.sha
+                    })
                 }
             );
-
-            if (response.ok) {
-                const files = await response.json();
-                for (const file of files) {
-                    await fetch(
-                        `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${file.path}`,
-                        {
-                            method: 'DELETE',
-                            headers: {
-                                'Authorization': `token ${GITHUB_TOKEN}`,
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                message: `Excluindo ${file.name}`,
-                                sha: file.sha
-                            })
-                        }
-                    );
-                    console.log(`Arquivo excluído: ${file.name}`);
-                }
-                alert('Todos os arquivos foram excluídos!');
-                listFiles(); // Atualiza a lista
-            } else {
-                console.error('Erro ao listar arquivos:', await response.json());
-                alert('Erro ao listar arquivos. Verifique o console para mais detalhes.');
-            }
         }
-    } else {
-        alert('Senha incorreta. Acesso negado.');
+        alert('Arquivos excluídos com sucesso!');
+        listFiles();
+    } catch (error) {
+        console.error(error);
+        alert('Erro ao excluir arquivos.');
     }
 }
 
-// Lista os arquivos ao carregar a página
+// Carregar lista ao iniciar
 listFiles();
